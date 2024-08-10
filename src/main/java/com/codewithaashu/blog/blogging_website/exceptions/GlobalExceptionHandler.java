@@ -1,9 +1,12 @@
 package com.codewithaashu.blog.blogging_website.exceptions;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashMap;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -34,4 +37,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<ErrorResponse>(new ErrorResponse(errorMessage, false), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<HashMap<String, String>> handleValidationException(
+            MethodArgumentNotValidException exception) {
+        // create a hashmap to mapping the error. it returns field and error message in
+        // that field.
+        HashMap<String, String> errorMap = new HashMap<>();
+        // it return list of objet errors
+        exception.getBindingResult().getAllErrors().forEach(error -> {
+            // in every object there is two thing i.e. field and message
+            String field = ((FieldError) error).getField();
+            String message = error.getDefaultMessage();
+            errorMap.put(field, message);
+        });
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -19,6 +19,8 @@ import com.codewithaashu.blog.blogging_website.Response.ApisResponse;
 import com.codewithaashu.blog.blogging_website.payload.UserDto;
 import com.codewithaashu.blog.blogging_website.service.UsersService;
 
+import jakarta.validation.Valid;
+
 @RestController // to create class to be Rest Controller
 @RequestMapping("/api/user") // this link is the leading link of all apis
 public class UserController {
@@ -28,7 +30,7 @@ public class UserController {
 
     // create user
     @PostMapping("")
-    public ResponseEntity<ApiResponse<UserDto>> createUserController(@RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<UserDto>> createUserController(@Valid @RequestBody UserDto userDto) {
         // pass to createuser service
         UserDto createdUser = userService.createUser(userDto);
         // create the response
@@ -72,7 +74,7 @@ public class UserController {
     // update user by id
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDto>> updateUserController(@PathVariable("id") Integer id,
-            @RequestBody UserDto userDto) {
+            @Valid @RequestBody UserDto userDto) {
         // pass to updateuser service
         UserDto updateUser = userService.updateUser(id, userDto.getName(), userDto.getImage(),
                 userDto.getAccountType());

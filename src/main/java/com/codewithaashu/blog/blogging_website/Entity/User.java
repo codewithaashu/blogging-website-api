@@ -21,10 +21,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // it will generate automatically value. and generation
                                                         // strategey is unique
     private Integer id;
-    @Column(name = "Full Name", length = 30, nullable = false) // you can also define column name
+
+    @Column(name = "Full Name", length = 20, nullable = false) // you can also define column name
     private String name;
     // you can provide constraint on the field name i.e. on Column
-    @Column(nullable = false, length = 50, unique = true) // provide constraint on the email value
+    @Column(nullable = false, length = 30, unique = true) // provide constraint on the email value
     private String email;
     @Column(name = "Email Verified") // you can also define column name
     private Boolean emailVerified;
