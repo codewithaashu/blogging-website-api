@@ -1,5 +1,10 @@
 package com.codewithaashu.blog.blogging_website.Entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +20,7 @@ import lombok.Setter;
 @Entity // it will create class to be entity class
 @Getter // to access private data it automatically generate getter method
 @Setter // to set value of private data it automatically generate setter method
+@Data
 @Table(name = "users") // to create table with given name
 public class User {
     // to create primary key of table
@@ -25,7 +32,7 @@ public class User {
     @Column(name = "Full Name", length = 20, nullable = false) // you can also define column name
     private String name;
     // you can provide constraint on the field name i.e. on Column
-    @Column(nullable = false, length = 30, unique = true) // provide constraint on the email value
+    @Column(nullable = false, length = 30, unique = true, updatable = false) // provide constraint on the email value
     private String email;
     @Column(name = "Email Verified") // you can also define column name
     private Boolean emailVerified;
@@ -34,6 +41,11 @@ public class User {
     private String image;
     private String password;
     private Integer followers;
+    @CreationTimestamp
+    @Column(updatable = false) // it will be initialise only one time. update is not exist
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     // to define the default value. if you do not pass these field. it automatically
     // take these values

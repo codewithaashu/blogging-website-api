@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import lombok.Setter;
 
 @Getter // automatically create getter method to access these attributes
 @Setter // automatically create setter method to set these attributes
+@Data
 public class UserDto {
     // id will automatically generate. so, it is not provided by user
     private Integer id;
