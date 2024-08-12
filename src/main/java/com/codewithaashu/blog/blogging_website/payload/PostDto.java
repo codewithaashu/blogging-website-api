@@ -2,7 +2,6 @@ package com.codewithaashu.blog.blogging_website.payload;
 
 import java.time.LocalDateTime;
 
-import com.codewithaashu.blog.blogging_website.Entity.User;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -24,7 +23,7 @@ public class PostDto {
     private String description;
     private String image;
     private Boolean status;
-    private User user;
+    private UserDto user;
     private CategoryDto category;
     private LocalDateTime createdAt;
 }

@@ -32,7 +32,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // automatically different-different value
     private Integer id;
 
-    @Column(name = "category_title", nullable = false, unique = false)
+    @Column(name = "category_title", nullable = false, unique = true)
     private String title;
     @Column(name = "column_description")
     private String description;

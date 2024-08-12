@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.Getter;
@@ -45,8 +44,8 @@ public class Comment {
         )
         private Post post;
 
-        // a user is associated to each comment
-        @OneToOne
+        // a user is associated to many comment
+        @ManyToOne
         @JoinColumn(name = "user_id", // specifies the name of foreign key column in this table
                         referencedColumnName = "id" // specified the name of primary key in parent table i.e (user
         )
