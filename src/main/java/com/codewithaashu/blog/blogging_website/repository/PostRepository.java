@@ -1,6 +1,7 @@
 package com.codewithaashu.blog.blogging_website.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.codewithaashu.blog.blogging_website.Entity.Category;
 import com.codewithaashu.blog.blogging_website.Entity.Post;
@@ -23,4 +24,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     // List<Post> findByTitleNotContains(String keyword);
 
     // List<Post> findByDescriptionContaining(String keyword);
+
+    // if method is not meaningfull name or define a custom functionality for a
+    // function
+    @Query("SELECT p FROM Post p WHERE p.title LIKE CONCAT('%',:searchText,'%') OR p.description LIKE CONCAT('%',:searchText,'%')")
+    List<Post> searchPost(String searchText);// it is not a meaningfull name
 }

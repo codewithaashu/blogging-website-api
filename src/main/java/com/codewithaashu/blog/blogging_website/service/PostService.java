@@ -150,7 +150,7 @@ public class PostService {
     // search post
     public List<PostDto> searchPost(String keywords) {
         // search post by keyword
-        List<Post> searchPosts = postRepository.findByTitleContains(keywords);
+        List<Post> searchPosts = postRepository.searchPost(keywords);
         // convert it into postDto form
         List<PostDto> postDtos = searchPosts.stream().map(post -> modelMapper.map(post, PostDto.class))
                 .collect(Collectors.toList());
