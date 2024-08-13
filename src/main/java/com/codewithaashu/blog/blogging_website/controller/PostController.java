@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codewithaashu.blog.blogging_website.Response.ApiResponse;
@@ -40,9 +41,12 @@ public class PostController {
 
     // get all posts controller
     @GetMapping("")
-    public ResponseEntity<ApisResponse<PostDto>> getAllPostsController() {
+    public ResponseEntity<ApisResponse<PostDto>> getAllPostsController(
+            @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "2") Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy) {
         // pass data to service to handle it
-        List<PostDto> posts = postService.getAllPost();
+        List<PostDto> posts = postService.getAllPost(pageNumber, pageSize, sortBy);
 
         return new ResponseEntity<>(new ApisResponse<PostDto>(posts, "Successfully fetched", true), HttpStatus.OK);
     }
@@ -91,5 +95,11 @@ public class PostController {
     }
 
     // search post controller
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<ApisResponse<PostDto>> searchPost(
+            @PathVariable(name = "keyword", required = true) String keyword) {
+        List<PostDto> posts = postService.searchPost(keyword);
+        return new ResponseEntity<>(new ApisResponse<>(posts, "Post searched successfully", true), HttpStatus.OK);
+    }
 
 }

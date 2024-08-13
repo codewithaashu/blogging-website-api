@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 // import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.codewithaashu.blog.blogging_website.Entity.Category;
@@ -54,9 +58,23 @@ public class PostService {
     }
 
     // get all post
-    public List<PostDto> getAllPost() {
-        // get all post from repository
-        List<Post> posts = postRepository.findAll();
+    public List<PostDto> getAllPost(Integer pageNumber, Integer pageSize, String sortBy) {
+        // implement sorting
+
+        // create an object of Sort class by using Sort.by() method.
+        // by default it is in ascending order
+        Sort sort = Sort.by(sortBy);
+        // for descending you can use descending()method
+        // Sort sort = Sort.by(sortBy).descending();
+
+        // implement pagination
+        // 1) create a pageable object
+        Pageable p = PageRequest.of(pageNumber, pageSize, sort);
+        // 2) Create a pages of post
+        Page<Post> pagePost = postRepository.findAll(p);
+        // 3) get the content of that page
+        List<Post> posts = pagePost.getContent();
+
         // convert it into postDto form
         List<PostDto> postDtos = posts.stream().map(post -> {
             PostDto postDto = this.modelMapper.map(post, PostDto.class);
@@ -130,5 +148,23 @@ public class PostService {
     }
 
     // search post
+    public List<PostDto> searchPost(String keywords) {
+        // search post by keyword
+        List<Post> searchPosts = postRepository.findByTitleContains(keywords);
+        // convert it into postDto form
+        List<PostDto> postDtos = searchPosts.stream().map(post -> modelMapper.map(post, PostDto.class))
+                .collect(Collectors.toList());
+        return postDtos;
+    }
 
 }
+
+// pagination help to send data on the client in part by part.(do not send all
+// the data at a time).
+// pageNumber and page size is get from params
+/*
+ * It contains three step:
+ * 1) Create a pageable object by using PageRequest.of() method.
+ * 2) Create a pages of post by using findAll() method
+ * 3) Retrive post from the page by using getContent() method.
+ */
