@@ -3,15 +3,18 @@ package com.codewithaashu.blog.blogging_website.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 //By default, Springboot provides form based authentication. But, you can create or configuration own custom authentication i.e. Web-based authentication
 
@@ -26,6 +29,9 @@ public class SecurityConfig {
     // create the user-details service object
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtFilter jwtFilter;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
@@ -56,7 +62,9 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).
+                // before the usernamepasswordAuthentication filter it do jwt filter
+                addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
     // there is a problem that it authenticate those user which is in application
@@ -78,5 +86,12 @@ public class SecurityConfig {
         // set the password encoding service.. to define the password encoding
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return daoAuthenticationProvider;
+    }
+
+    // Global AuthenticationManager configured with an AuthenticationProvider bean
+    // to configure authentication manager
+    @Bean // it can be autowired
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 }

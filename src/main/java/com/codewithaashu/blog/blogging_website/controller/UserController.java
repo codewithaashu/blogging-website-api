@@ -90,4 +90,13 @@ public class UserController {
         // create the response
         return new ResponseEntity<>(new ApiResponse<UserDto>(user, true, "Followed successfully"), HttpStatus.OK);
     }
+
+    // for login we create a route. after login, it will verify the credentials with
+    // db and sent back to a token on the client
+    @PostMapping("/login")
+    public String loginUserController(@RequestBody UserDto userDto) {
+        // pass to login service
+        String token = userService.loginUser(userDto.getEmail(), userDto.getPassword());
+        return token;
+    }
 }

@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import com.codewithaashu.blog.blogging_website.Entity.User;
 import com.codewithaashu.blog.blogging_website.exceptions.ResourceNotFoundException;
 import com.codewithaashu.blog.blogging_website.payload.UserDto;
 import com.codewithaashu.blog.blogging_website.repository.UsersRepository;
+import com.codewithaashu.blog.blogging_website.security.JWTService;
 
 @Service // to create class to be service class
 // it is main file where all business logics are handle
@@ -27,6 +31,12 @@ public class UsersService {
 
     // for encrypt password, we create an object of BcryptPasswordEncoder
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JWTService jwtService;
 
     // to create user
     public UserDto createUser(UserDto userDto) {
@@ -122,5 +132,20 @@ public class UsersService {
     public UserDetails getUserByEmail(String email) {
         User userDetail = usersRepository.findByEmail(email); // find by email
         return modelMapper.map(userDetail, UserDetails.class);
+    }
+
+    // verify the credentials by using authentication and generate a
+    // token.Authentication is done by
+    // UsernamePasswordAuthenticationToken(username,password).
+    // and sent back to the client
+    public String loginUser(String email, String password) {
+        // user is login by authentication manager method
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        if (authentication.isAuthenticated()) {
+            // if authentication is success then generate token
+            return jwtService.generateToken(email);
+        }
+        return "fail authentication";
     }
 }
