@@ -12,6 +12,7 @@ import com.codewithaashu.blog.blogging_website.Entity.User;
 public interface UsersRepository extends JpaRepository<User, Integer> {
 
     // you can also define custom method
+    User findByEmail(String email);
 }
 
 // it is interface but at runtime spring container create a class i.e. proxy

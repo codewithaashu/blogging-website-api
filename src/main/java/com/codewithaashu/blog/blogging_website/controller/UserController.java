@@ -29,7 +29,7 @@ public class UserController {
     private UsersService userService;// to access methods of service, we create an object
 
     // create user
-    @PostMapping("")
+    @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserDto>> createUserController(@Valid @RequestBody UserDto userDto) {
         // pass to createuser service
         UserDto createdUser = userService.createUser(userDto);
@@ -90,5 +90,4 @@ public class UserController {
         // create the response
         return new ResponseEntity<>(new ApiResponse<UserDto>(user, true, "Followed successfully"), HttpStatus.OK);
     }
-
 }

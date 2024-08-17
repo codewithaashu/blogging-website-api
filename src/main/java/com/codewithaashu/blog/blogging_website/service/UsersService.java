@@ -3,8 +3,11 @@ package com.codewithaashu.blog.blogging_website.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.codewithaashu.blog.blogging_website.Entity.User;
@@ -18,15 +21,21 @@ public class UsersService {
 
     // create an object of UserRepository to access all operations on db
     @Autowired
-    UsersRepository usersRepository;
+    private UsersRepository usersRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+
+    // for encrypt password, we create an object of BcryptPasswordEncoder
+    private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
     // to create user
     public UserDto createUser(UserDto userDto) {
         // request and response are basically payload type data and it is entire
         // different from entity.
         // repository only accept entity type data . so we have to change
-        User user = new User();// create an empty user
-        BeanUtils.copyProperties(userDto, user);// copy them in user
+        User user = modelMapper.map(userDto, User.class);
+        // encrypt the password and set the password
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         // save user in db
         User savedUser = usersRepository.save(user);
         // change in response type
@@ -107,5 +116,11 @@ public class UsersService {
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(updatedUser, userDto);
         return userDto;
+    }
+
+    // get user by email address
+    public UserDetails getUserByEmail(String email) {
+        User userDetail = usersRepository.findByEmail(email); // find by email
+        return modelMapper.map(userDetail, UserDetails.class);
     }
 }
