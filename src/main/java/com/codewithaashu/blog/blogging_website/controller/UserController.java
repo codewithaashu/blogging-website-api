@@ -94,9 +94,13 @@ public class UserController {
     // for login we create a route. after login, it will verify the credentials with
     // db and sent back to a token on the client
     @PostMapping("/login")
-    public String loginUserController(@RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<String>> loginUserController(@RequestBody UserDto userDto) {
         // pass to login service
         String token = userService.loginUser(userDto.getEmail(), userDto.getPassword());
-        return token;
+        if (token == "FAILED") {
+            return new ResponseEntity<>(new ApiResponse<String>(null, false, "Invalid Credentails"),
+                    HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(new ApiResponse<String>(token, true, "Successfully login"), HttpStatus.OK);
     }
 }

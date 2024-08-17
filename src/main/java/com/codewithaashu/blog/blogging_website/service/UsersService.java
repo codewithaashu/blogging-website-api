@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -140,12 +141,17 @@ public class UsersService {
     // and sent back to the client
     public String loginUser(String email, String password) {
         // user is login by authentication manager method
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        Authentication authentication = null;
+        try {
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        } catch (BadCredentialsException exception) {
+            throw new BadCredentialsException(" Invalid Username or Password  !!");
+        }
         if (authentication.isAuthenticated()) {
             // if authentication is success then generate token
             return jwtService.generateToken(email);
         }
-        return "fail authentication";
+        return "FAILED";
     }
 }
